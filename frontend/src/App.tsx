@@ -1,11 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
+import { getBackendHealth } from './api/backendApi'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [backendMessage, setBackendMessage] = useState<string | null>(null)
+  const [backendError, setBackendError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    getBackendHealth(controller.signal)
+      .then(({ message }) => setBackendMessage(message))
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return
+
+        setBackendError(
+          error instanceof Error ? error.message : 'Unable to reach the backend.',
+        )
+      })
+
+    return () => controller.abort()
+  }, [])
 
   return (
     <>
@@ -20,6 +39,18 @@ function App() {
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
+          <section className="backend-status" aria-live="polite">
+            <h2>Backend connection</h2>
+            {backendMessage ? (
+              <p role="status">{backendMessage}</p>
+            ) : backendError ? (
+              <p className="backend-status__error" role="alert">
+                {backendError}
+              </p>
+            ) : (
+              <p role="status">Connecting to the backend…</p>
+            )}
+          </section>
         </div>
         <button
           type="button"

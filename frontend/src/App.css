@@ -17,6 +17,27 @@
   }
 }
 
+.backend-status {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.backend-status h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.backend-status p {
+  margin: 0;
+}
+
+.backend-status__error {
+  color: #b42318;
+}
+
 .hero {
   position: relative;
 
